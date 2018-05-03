@@ -19,7 +19,7 @@ import { environment } from '../environments/environment';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    environment.production ? ServiceWorkerModule.register('/ngsw-worker.js') : []
+    environment.production ? ServiceWorkerModule.register('/ang5/ngsw-worker.js') : []
   ],
   providers: [],
   bootstrap: [AppComponent]
