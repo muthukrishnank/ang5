@@ -2183,7 +2183,7 @@ class Driver {
         }
     }
     async fetchLatestManifest(ignoreOfflineError = false) {
-        const res = await this.safeFetch(this.adapter.newRequest('ngsw.json?ngsw-cache-bust=' + Math.random()));
+        const res = await this.safeFetch(this.adapter.newRequest('ang5/ngsw.json?ngsw-cache-bust=' + Math.random()));
         if (!res.ok) {
             if (res.status === 404) {
                 await this.deleteAllCaches();
