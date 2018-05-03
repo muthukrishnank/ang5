@@ -122,6 +122,10 @@ MIT
 MIT
 MIT
 
+@angular/service-worker@5.2.10
+MIT
+MIT
+
 @angular/common@5.2.10
 MIT
 MIT
