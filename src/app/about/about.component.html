@@ -1,3 +1,11 @@
-<p>
-  about works!
-</p>
+<h1 style="text-align:  center;">BbOffline - {{ mode }} Mode</h1>
+<br>
+<p style="text-align:  center;">Please click a button to retrieve the data!!!</p>
+
+<div style="text-align:  center;">
+  <button style="height:  50px;width:  150px; font-weight: bold;" type="button" (click)="getAssignment()"> Get Assignment </button>
+  <button style="height:  50px;width:  150px; font-weight: bold;" type="button" (click)="getDiscussion()"> Get Discussion </button>
+</div>
+<br>
+  <div style="text-align:  center;" id="assignmentResult"></div>
+  <div style="text-align:  center;" id="discussionResult"></div>
