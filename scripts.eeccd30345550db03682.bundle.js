@@ -1,0 +1,1 @@
+var myExtObject={getAssignmentData:function(t){getRestAssignmentData(t)},getDiscussionData:function(t){getRestDiscussionData(t)}};
