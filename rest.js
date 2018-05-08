@@ -93,35 +93,43 @@ function getRestAssignmentData(mode){
 
 }
 
+function getDb( storeKey, storeValue ){
+  return new Promise(function(resolve, reject) {
+    if (!('indexedDB' in window)) {
+      console.log('This browser doesn\'t support IndexedDB');
+      return;
+    }
+    var db;
+    var request = window.indexedDB.open("newDatabase", 1);
+   
+    request.onerror = function(event) {
+      console.log("error: ");
+      reject("failed");
+    };
+   
+    request.onsuccess = function(event) {
+      db = request.result;
+      console.log("success: "+ db);
+      resolve(db);
+    };
+   
+    request.onupgradeneeded = function(event) {
+      var db = event.target.result;
+      //var objectStore = db.createObjectStore("discussions", {keyPath: "crsForumMainId"});
+      console.log("storeKey: ", storeKey);
+      console.log("storeValue: ", storeValue);
+      var objectStore = db.createObjectStore(storeKey, {keyPath: storeValue});
+    }
+  });
+}
 
 function getRestDiscussionData(mode){
     console.log("getRestDiscussionData");
-    if(mode == 'Online'){
-
-      if (!('indexedDB' in window)) {
-        console.log('This browser doesn\'t support IndexedDB');
-        return;
-      }
-      var db;
-        var request = window.indexedDB.open("newDatabase", 2);
-     
-        request.onerror = function(event) {
-          console.log("error: ");
-        };
-     
-        request.onsuccess = function(event) {
-          db = request.result;
-          console.log("success: "+ db);
-        };
-     
-        request.onupgradeneeded = function(event) {
-            var db = event.target.result;
-            var objectStore = db.createObjectStore("discussions", {keyPath: "crsForumMainId"});
-            /* for (var i in customerData) {
-                    objectStore.add(customerData[i]);      
-            } */
-        }
+    getDb("discussions","crsForumMainId").then(function (db){
+      console.log("Db retrieval success: ", db);
     
+      if(mode == 'Online'){
+
         var txt;
         var xhttp = new XMLHttpRequest();
         var cntntId = '2265';
@@ -199,8 +207,8 @@ function getRestDiscussionData(mode){
         };   
   
     }else{
-      var db; 
-      var request = window.indexedDB.open("newDatabase", 2);
+     /*  var db; 
+      var request = window.indexedDB.open("newDatabase", 1);
      
      request.onerror = function(event) {
        console.log("error: ");
@@ -208,7 +216,7 @@ function getRestDiscussionData(mode){
   
      request.onsuccess = function(event) {
        db = request.result;
-       console.log("success: "+ db);
+       console.log("success: "+ db); */
        var objectStore = db.transaction("discussions").objectStore("discussions");
     
     objectStore.openCursor().onsuccess = function(event) {
@@ -222,7 +230,9 @@ function getRestDiscussionData(mode){
       
       };     
   
-     };
+//     };
   
-    }
+    }  
+
+    });
 }
