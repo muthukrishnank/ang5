@@ -93,14 +93,10 @@ function getRestAssignmentData(mode){
 
 }
 
-function getDb( storeKey, storeValue ){
+function createDbObjectStore( storeKey, storeValue, version ){
   return new Promise(function(resolve, reject) {
-    if (!('indexedDB' in window)) {
-      console.log('This browser doesn\'t support IndexedDB');
-      return;
-    }
     var db;
-    var request = window.indexedDB.open("newDatabase", 1);
+    var request = window.indexedDB.open("newDatabase", version);
    
     request.onerror = function(event) {
       console.log("error: ");
@@ -125,8 +121,8 @@ function getDb( storeKey, storeValue ){
 
 function getRestDiscussionData(mode){
     console.log("getRestDiscussionData");
-    getDb("discussions","crsForumMainId").then(function (db){
-      console.log("Db retrieval success: ", db);
+    createDbObjectStore("discussions", "crsForumMainId", 3).then(function (db){
+    console.log("Db retrieval success: ", db);
     
       if(mode == 'Online'){
 
@@ -219,16 +215,16 @@ function getRestDiscussionData(mode){
        console.log("success: "+ db); */
        var objectStore = db.transaction("discussions").objectStore("discussions");
     
-    objectStore.openCursor().onsuccess = function(event) {
-      var cursor = event.target.result;
-      if (cursor) {
-            console.log(cursor.key);
-            console.log(cursor.value);
-            document.getElementById('assignmentResult').innerHTML = '<h3>Showing Offline result: <h3> <h4>' + JSON.stringify(cursor.value) + '</h4>';
-            cursor.continue();
-      }
-      
-      };     
+      objectStore.openCursor().onsuccess = function(event) {
+        var cursor = event.target.result;
+        if (cursor) {
+              console.log(cursor.key);
+              console.log(cursor.value);
+              document.getElementById('assignmentResult').innerHTML = '<h3>Showing Offline result: <h3> <h4>' + JSON.stringify(cursor.value) + '</h4>';
+              cursor.continue();
+        }
+        
+        };     
   
 //     };
   
