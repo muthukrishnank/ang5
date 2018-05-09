@@ -72,10 +72,10 @@ function getRestAssignmentData(mode){
 
 }
 
-function createDbObjectStore( storeKey, storeValue, version ){
+function createDbObjectStore( storeKey, storeValue ){
   return new Promise(function(resolve, reject) {
     var db;
-    var request = window.indexedDB.open("newDatabase", version);
+    var request = window.indexedDB.open( "newDatabase" );
    
     request.onerror = function(event) {
       console.log("error: ");
@@ -85,16 +85,22 @@ function createDbObjectStore( storeKey, storeValue, version ){
     request.onsuccess = function(event) {
       db = request.result;
       console.log("success: "+ db);
+
+      if(!db.objectStoreNames.contains(storeKey)){
+        var secondRequest = window.indexedDB.open( "newDatabase", db.version + 1 );
+      
+        secondRequest.onupgradeneeded = function(event) {
+          var db = event.target.result;
+          console.log("storeKey: ", storeKey);
+          console.log("storeValue: ", storeValue);
+          var objectStore = db.createObjectStore(storeKey, {keyPath: storeValue});
+        }
+      
+      }
+
       resolve(db);
     };
-   
-    request.onupgradeneeded = function(event) {
-      var db = event.target.result;
-      //var objectStore = db.createObjectStore("discussions", {keyPath: "crsForumMainId"});
-      console.log("storeKey: ", storeKey);
-      console.log("storeValue: ", storeValue);
-      var objectStore = db.createObjectStore(storeKey, {keyPath: storeValue});
-    }
+  
   });
 }
 
