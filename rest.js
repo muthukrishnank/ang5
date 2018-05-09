@@ -1,32 +1,10 @@
 function getRestAssignmentData(mode){
  console.log("getRestAssignmentData", mode);
 
-  if(mode == 'Online'){
+ createDbObjectStore("assignments", "name", 2).then(function (db){
 
-    if (!('indexedDB' in window)) {
-      console.log('This browser doesn\'t support IndexedDB');
-      return;
-    }
-    var db;
-      var request = window.indexedDB.open("newDatabase", 1);
-   
-      request.onerror = function(event) {
-        console.log("error: ");
-      };
-   
-      request.onsuccess = function(event) {
-        db = request.result;
-        console.log("success: "+ db);
-      };
-   
-      request.onupgradeneeded = function(event) {
-          var db = event.target.result;
-          var objectStore = db.createObjectStore("assignments", {keyPath: "name"});
-          /* for (var i in customerData) {
-                  objectStore.add(customerData[i]);      
-          } */
-      }
-  
+  if(mode == 'Online'){
+    
       var txt;
       var xhttp = new XMLHttpRequest();
       var cntntId = '2265';
@@ -64,7 +42,7 @@ function getRestAssignmentData(mode){
       };   
 
   }else{
-    var db; 
+/*     var db; 
     var request = window.indexedDB.open("newDatabase", 1);
    
    request.onerror = function(event) {
@@ -73,7 +51,7 @@ function getRestAssignmentData(mode){
 
    request.onsuccess = function(event) {
      db = request.result;
-     console.log("success: "+ db);
+     console.log("success: "+ db); */
      var objectStore = db.transaction("assignments").objectStore("assignments");
   
   objectStore.openCursor().onsuccess = function(event) {
@@ -87,9 +65,10 @@ function getRestAssignmentData(mode){
     
     };     
 
-   };
+ //  };
 
   }
+});
 
 }
 
@@ -121,9 +100,10 @@ function createDbObjectStore( storeKey, storeValue, version ){
 
 function getRestDiscussionData(mode){
     console.log("getRestDiscussionData");
-    createDbObjectStore("discussions", "crsForumMainId", 3).then(function (db){
-    console.log("Db retrieval success: ", db);
     
+    createDbObjectStore("discussions", "crsForumMainId", 3).then(function (db){
+    
+      console.log("Db retrieval success: ", db);
       if(mode == 'Online'){
 
         var txt;
