@@ -94,13 +94,14 @@ function createDbObjectStore( storeKey, storeValue ){
           console.log("storeKey: ", storeKey);
           console.log("storeValue: ", storeValue);
           var objectStore = db.createObjectStore(storeKey, {keyPath: storeValue});
+          resolve(db);
         }
       
+      }else{
+        resolve(db);
       }
-
-      resolve(db);
     };
-  
+    
   });
 }
 
