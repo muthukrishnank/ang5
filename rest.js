@@ -26,7 +26,7 @@ function getRestAssignmentData(mode){
                   var request = db.transaction(["assignments"], "readwrite")
                 .objectStore("assignments")
                 .add(json);
-                                 
+                db.close();                
                 request.onsuccess = function(event) {
                   // alert("Assignment has been added to your database.");
                 };
@@ -61,6 +61,7 @@ function getRestAssignmentData(mode){
           console.log(cursor.value);
           document.getElementById('assignmentResult').innerHTML = '<h3>Showing Offline result: <h3> <h4>' + JSON.stringify(cursor.value) + '</h4>';
           cursor.continue();
+          db.close();
     }
     
     };     
@@ -87,6 +88,7 @@ function createDbObjectStore( storeKey, storeValue ){
       console.log("success: "+ db);
 
       if(!db.objectStoreNames.contains(storeKey)){
+        db.close();
         var secondRequest = window.indexedDB.open( "newDatabase", db.version + 1 );
       
         secondRequest.onupgradeneeded = function(event) {
@@ -173,7 +175,7 @@ function getRestDiscussionData(mode){
                     var request = db.transaction(["discussions"], "readwrite")
                   .objectStore("discussions")
                   .add(crsForumObj);
-                                   
+                  db.close();                 
                   request.onsuccess = function(event) {
                     // alert("Assignment has been added to your database.");
                   };
@@ -209,6 +211,7 @@ function getRestDiscussionData(mode){
               console.log(cursor.value);
               document.getElementById('assignmentResult').innerHTML = '<h3>Showing Offline result: <h3> <h4>' + JSON.stringify(cursor.value) + '</h4>';
               cursor.continue();
+              db.close();
         }
         
         };     
