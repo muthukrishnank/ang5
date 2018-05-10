@@ -1,32 +1,10 @@
 function getRestAssignmentData(mode){
  console.log("getRestAssignmentData", mode);
 
-  if(mode == 'Online'){
+ createDbObjectStore("assignments", "name", 2).then(function (db){
 
-    if (!('indexedDB' in window)) {
-      console.log('This browser doesn\'t support IndexedDB');
-      return;
-    }
-    var db;
-      var request = window.indexedDB.open("newDatabase", 1);
-   
-      request.onerror = function(event) {
-        console.log("error: ");
-      };
-   
-      request.onsuccess = function(event) {
-        db = request.result;
-        console.log("success: "+ db);
-      };
-   
-      request.onupgradeneeded = function(event) {
-          var db = event.target.result;
-          var objectStore = db.createObjectStore("assignments", {keyPath: "name"});
-          /* for (var i in customerData) {
-                  objectStore.add(customerData[i]);      
-          } */
-      }
-  
+  if(mode == 'Online'){
+    
       var txt;
       var xhttp = new XMLHttpRequest();
       var cntntId = '2265';
@@ -48,7 +26,7 @@ function getRestAssignmentData(mode){
                   var request = db.transaction(["assignments"], "readwrite")
                 .objectStore("assignments")
                 .add(json);
-                                 
+                db.close();                
                 request.onsuccess = function(event) {
                   // alert("Assignment has been added to your database.");
                 };
@@ -64,7 +42,7 @@ function getRestAssignmentData(mode){
       };   
 
   }else{
-    var db; 
+/*     var db; 
     var request = window.indexedDB.open("newDatabase", 1);
    
    request.onerror = function(event) {
@@ -73,7 +51,7 @@ function getRestAssignmentData(mode){
 
    request.onsuccess = function(event) {
      db = request.result;
-     console.log("success: "+ db);
+     console.log("success: "+ db); */
      var objectStore = db.transaction("assignments").objectStore("assignments");
   
   objectStore.openCursor().onsuccess = function(event) {
@@ -83,45 +61,60 @@ function getRestAssignmentData(mode){
           console.log(cursor.value);
           document.getElementById('assignmentResult').innerHTML = '<h3>Showing Offline result: <h3> <h4>' + JSON.stringify(cursor.value) + '</h4>';
           cursor.continue();
+          db.close();
     }
     
     };     
 
-   };
+ //  };
 
   }
+});
 
 }
 
+function createDbObjectStore( storeKey, storeValue ){
+  return new Promise(function(resolve, reject) {
+    var db;
+    var request = window.indexedDB.open( "newDatabase" );
+   
+    request.onerror = function(event) {
+      console.log("error: ");
+      reject("failed");
+    };
+   
+    request.onsuccess = function(event) {
+      db = request.result;
+      console.log("success: "+ db);
+
+      if(!db.objectStoreNames.contains(storeKey)){
+        db.close();
+        var secondRequest = window.indexedDB.open( "newDatabase", db.version + 1 );
+      
+        secondRequest.onupgradeneeded = function(event) {
+          var db = event.target.result;
+          console.log("storeKey: ", storeKey);
+          console.log("storeValue: ", storeValue);
+          var objectStore = db.createObjectStore(storeKey, {keyPath: storeValue});
+          resolve(db);
+        }
+      
+      }else{
+        resolve(db);
+      }
+    };
+    
+  });
+}
 
 function getRestDiscussionData(mode){
     console.log("getRestDiscussionData");
-    if(mode == 'Online'){
-
-      if (!('indexedDB' in window)) {
-        console.log('This browser doesn\'t support IndexedDB');
-        return;
-      }
-      var db;
-        var request = window.indexedDB.open("newDatabase", 2);
-     
-        request.onerror = function(event) {
-          console.log("error: ");
-        };
-     
-        request.onsuccess = function(event) {
-          db = request.result;
-          console.log("success: "+ db);
-        };
-     
-        request.onupgradeneeded = function(event) {
-            var db = event.target.result;
-            var objectStore = db.createObjectStore("discussions", {keyPath: "crsForumMainId"});
-            /* for (var i in customerData) {
-                    objectStore.add(customerData[i]);      
-            } */
-        }
     
+    createDbObjectStore("discussions", "crsForumMainId", 3).then(function (db){
+    
+      console.log("Db retrieval success: ", db);
+      if(mode == 'Online'){
+
         var txt;
         var xhttp = new XMLHttpRequest();
         var cntntId = '2265';
@@ -182,7 +175,7 @@ function getRestDiscussionData(mode){
                     var request = db.transaction(["discussions"], "readwrite")
                   .objectStore("discussions")
                   .add(crsForumObj);
-                                   
+                  db.close();                 
                   request.onsuccess = function(event) {
                     // alert("Assignment has been added to your database.");
                   };
@@ -199,8 +192,8 @@ function getRestDiscussionData(mode){
         };   
   
     }else{
-      var db; 
-      var request = window.indexedDB.open("newDatabase", 2);
+     /*  var db; 
+      var request = window.indexedDB.open("newDatabase", 1);
      
      request.onerror = function(event) {
        console.log("error: ");
@@ -208,21 +201,24 @@ function getRestDiscussionData(mode){
   
      request.onsuccess = function(event) {
        db = request.result;
-       console.log("success: "+ db);
+       console.log("success: "+ db); */
        var objectStore = db.transaction("discussions").objectStore("discussions");
     
-    objectStore.openCursor().onsuccess = function(event) {
-      var cursor = event.target.result;
-      if (cursor) {
-            console.log(cursor.key);
-            console.log(cursor.value);
-            document.getElementById('assignmentResult').innerHTML = '<h3>Showing Offline result: <h3> <h4>' + JSON.stringify(cursor.value) + '</h4>';
-            cursor.continue();
-      }
-      
-      };     
+      objectStore.openCursor().onsuccess = function(event) {
+        var cursor = event.target.result;
+        if (cursor) {
+              console.log(cursor.key);
+              console.log(cursor.value);
+              document.getElementById('assignmentResult').innerHTML = '<h3>Showing Offline result: <h3> <h4>' + JSON.stringify(cursor.value) + '</h4>';
+              cursor.continue();
+              db.close();
+        }
+        
+        };     
   
-     };
+//     };
   
-    }
+    }  
+
+    });
 }
